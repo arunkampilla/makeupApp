@@ -1,10 +1,14 @@
 {
   "dependencies": {
+    "22": "^0.0.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "vite": "^8.0.8"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "vite build",
+    "dev": "vite"
   }
 }
