@@ -3,12 +3,26 @@
     "22": "^0.0.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
+    "@expo/vector-icons": "^15.0.2",
+    "date-fns": "^4.1.0",
+    "expo": "^55.0.15",
+    "expo-notifications": "~55.0.19",
+    "expo-router": "~55.0.12",
     "express": "^5.2.1",
-    "vite": "^8.0.8"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-native-safe-area-context": "~5.6.2"
   },
+  "main": "expo-router/entry",
   "scripts": {
     "start": "node server.js",
     "build": "vite build",
     "dev": "vite"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.10",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8"
   }
 }

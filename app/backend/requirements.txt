@@ -16,3 +16,8 @@ requests==2.31.0
 urllib3==2.2.1
 virtualenv==20.25.0
 Werkzeug==3.0.1
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+motor>=3.5.0
+python-dotenv>=1.0.1
+pydantic>=2.9.0
