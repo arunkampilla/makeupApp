@@ -4,19 +4,22 @@
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
     "@expo/vector-icons": "^15.0.2",
+    "@react-native-community/datetimepicker": "8.6.0",
     "date-fns": "^4.1.0",
     "expo": "^55.0.15",
     "expo-notifications": "~55.0.19",
     "expo-router": "~55.0.12",
+    "expo-status-bar": "~55.0.5",
     "express": "^5.2.1",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-native-safe-area-context": "~5.6.2"
+    "react-dom": "19.2.0",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-web": "^0.21.0"
   },
   "main": "expo-router/entry",
   "scripts": {
     "start": "node server.js",
-    "build": "vite build",
+    "build": "expo export",
     "dev": "vite"
   },
   "devDependencies": {
