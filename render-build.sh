@@ -1,5 +1,5 @@
 # Build frontend
-cd src/frontend/ && npm install && npm run build
+cd src/ && npm install && npm run build
 # Move build files to backend static folder
 cp -r dist/* ..src/backend/
 # Install backend dependencies
