@@ -3,11 +3,11 @@ import { Tabs } from 'expo-router';
 import { Platform, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <StatusBar style="light" />
       <Tabs
         screenOptions={{
@@ -78,7 +78,7 @@ export default function RootLayout() {
           name="add-event"
           options={{
             title: 'Add',
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <View style={styles.addButton}>
                 <Ionicons name="add" size={26} color="#fff" />
               </View>
@@ -89,7 +89,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="client-history"
           options={{
-            href: null, // Hide from tab bar
+            href: null,
             headerShown: false,
           }}
         />
