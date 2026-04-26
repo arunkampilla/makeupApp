@@ -30,12 +30,19 @@ async def root():
 api_router = APIRouter(prefix="/api")
 
 # Helper function to convert ObjectId to string
+    
 def serialize_doc(doc):
-    if doc:
-        doc['id'] = str(doc['_id'])
-        del doc['_id']
-    return doc
+    if not doc:
+        return None
 
+    return {
+        "id": str(doc.get("_id")),
+        "name": doc.get("name", ""),
+        "phone": doc.get("phone", ""),
+        "email": doc.get("email", ""),
+        "notes": doc.get("notes", ""),
+        "created_at": doc.get("created_at"),
+    }
 # ==================== CLIENT MODELS ====================
 class ClientCreate(BaseModel):
     name: str
@@ -123,7 +130,8 @@ async def get_clients(search: Optional[str] = None):
         }
 
     clients = await db.clients.find(query).sort("name", 1).to_list(1000)
-    return [ClientResponse(**serialize_doc(c)) for c in clients]
+
+    return [serialize_doc(c) for c in clients]
 
 @api_router.get("/clients/{client_id}", response_model=ClientResponse)
 async def get_client(client_id: str):
