@@ -4,5 +4,6 @@ cd app/ && npm install && npm run build
 cp -r dist/* ..app/backend/
 # Install backend dependencies
 cd app/backend && pip install -r requirements.txt
-# Start commadn
-cd app/backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+# Start command
+uvicorn app.backend.server:app --host 0.0.0.0 --port 10000
+#cd app/backend && uvicorn server:app --host 0.0.0.0 --port $PORT
