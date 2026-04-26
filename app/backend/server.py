@@ -22,6 +22,10 @@ db = client[os.environ['DB_NAME']]
 # Create the main app
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"status": "FASTAPI RUNNING"}
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
