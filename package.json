@@ -23,7 +23,8 @@
     "react-native-screens": "~4.16.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "react-native-calendars": "^1.1313.0",
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "expo-notifications": "~0.32.12"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",
