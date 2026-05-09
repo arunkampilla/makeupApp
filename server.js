@@ -1,53 +1,36 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
+const express = require("express");
+const path = require("path");
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
-/* -------------------------
-   TEMP IN-MEMORY DATABASE
--------------------------- */
-
+// TEMP in-memory storage
 let clients = [];
 
-/* -------------------------
-   API ROUTES
--------------------------- */
-
 // GET clients
-app.get('/api/clients', (req, res) => {
+app.get("/api/clients", (req, res) => {
   res.json(clients);
 });
 
 // ADD client
-app.post('/api/clients', (req, res) => {
+app.post("/api/clients", (req, res) => {
   const newClient = {
     id: Date.now().toString(),
-    name: req.body.name || '',
-    phone: req.body.phone || '',
-    email: req.body.email || '',
-    notes: req.body.notes || '',
+    ...req.body,
     created_at: new Date().toISOString(),
   };
 
   clients.push(newClient);
 
-  res.json(newClient);
+  res.status(201).json(newClient);
 });
 
 // UPDATE client
-app.put('/api/clients/:id', (req, res) => {
-  const { id } = req.params;
-
+app.put("/api/clients/:id", (req, res) => {
   clients = clients.map((client) =>
-    client.id === id
-      ? {
-          ...client,
-          ...req.body,
-        }
+    client.id === req.params.id
+      ? { ...client, ...req.body }
       : client
   );
 
@@ -55,29 +38,24 @@ app.put('/api/clients/:id', (req, res) => {
 });
 
 // DELETE client
-app.delete('/api/clients/:id', (req, res) => {
-  const { id } = req.params;
-
-  clients = clients.filter((client) => client.id !== id);
+app.delete("/api/clients/:id", (req, res) => {
+  clients = clients.filter(
+    (client) => client.id !== req.params.id
+  );
 
   res.json({ success: true });
 });
 
-/* -------------------------
-   FRONTEND
--------------------------- */
+// Serve Expo web build
+app.use(express.static(path.join(__dirname, "dist")));
 
-app.use(express.static(path.join(__dirname, 'dist')));
-
-app.get('/{*any}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// React/Expo Router fallback
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
-/* -------------------------
-   SERVER
--------------------------- */
 
-const PORT = process.env.PORT || 8081;
+const port = process.env.PORT || 8081;
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on ${port}`);
 });

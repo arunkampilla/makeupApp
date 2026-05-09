@@ -18,7 +18,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+const BACKEND_URL =
+  process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
 interface Client {
   id: string;
