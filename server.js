@@ -1,23 +1,79 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(cors());
+app.use(express.json());
 
-const port = process.env.PORT || 8081;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server is running on port ${port}`);
+/* =========================
+   TEMP IN-MEMORY DATABASE
+========================= */
+
+let clients = [];
+
+/* =========================
+   API ROUTES
+========================= */
+
+// GET clients
+app.get("/api/clients", (req, res) => {
+  res.json(clients);
 });
 
+// ADD client
+app.post("/api/clients", (req, res) => {
+  const newClient = {
+    id: Date.now().toString(),
+    ...req.body,
+    created_at: new Date().toISOString(),
+  };
 
-//const PORT = process.env.PORT || 5000;
-//
-//app.listen(PORT, () => {
-//  console.log("Server running on port", PORT);
-//});
+  clients.push(newClient);
 
+  console.log("Client added:", newClient);
 
-app.get('/*any', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.status(201).json(newClient);
+});
+
+// UPDATE client
+app.put("/api/clients/:id", (req, res) => {
+  const { id } = req.params;
+
+  clients = clients.map((client) =>
+    client.id === id ? { ...client, ...req.body } : client
+  );
+
+  res.json({ success: true });
+});
+
+// DELETE client
+app.delete("/api/clients/:id", (req, res) => {
+  const { id } = req.params;
+
+  clients = clients.filter((client) => client.id !== id);
+
+  res.json({ success: true });
+});
+
+/* =========================
+   SERVE EXPO WEB BUILD
+========================= */
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+// SPA fallback
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+/* =========================
+   START SERVER
+========================= */
+
+const port = process.env.PORT || 8081;
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on port ${port}`);
 });
