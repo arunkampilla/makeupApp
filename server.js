@@ -3,59 +3,50 @@ const path = require("path");
 
 const app = express();
 
+// MUST be BEFORE routes
 app.use(express.json());
 
-// TEMP in-memory storage
 let clients = [];
 
-// GET clients
+// GET
 app.get("/api/clients", (req, res) => {
   res.json(clients);
 });
 
-// ADD client
+// POST
 app.post("/api/clients", (req, res) => {
-  const newClient = {
-    id: Date.now().toString(),
-    ...req.body,
-    created_at: new Date().toISOString(),
-  };
+  try {
+    console.log("BODY RECEIVED:", req.body);
 
-  clients.push(newClient);
+    const newClient = {
+      id: Date.now().toString(),
+      name: req.body?.name || "",
+      phone: req.body?.phone || "",
+      email: req.body?.email || "",
+      notes: req.body?.notes || "",
+      created_at: new Date().toISOString(),
+    };
 
-  res.status(201).json(newClient);
+    clients.push(newClient);
+
+    console.log("CLIENT ADDED:", newClient);
+
+    res.status(201).json(newClient);
+  } catch (err) {
+    console.error("POST ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// UPDATE client
-app.put("/api/clients/:id", (req, res) => {
-  clients = clients.map((client) =>
-    client.id === req.params.id
-      ? { ...client, ...req.body }
-      : client
-  );
-
-  res.json({ success: true });
-});
-
-// DELETE client
-app.delete("/api/clients/:id", (req, res) => {
-  clients = clients.filter(
-    (client) => client.id !== req.params.id
-  );
-
-  res.json({ success: true });
-});
-
-// Serve Expo web build
+// static
 app.use(express.static(path.join(__dirname, "dist")));
 
-// React/Expo Router fallback
-app.get(/.*/, (req, res) => {
+// SPA fallback (IMPORTANT FIX - regex correct)
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 const port = process.env.PORT || 8081;
-
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on ${port}`);
+  console.log("Server running on", port);
 });

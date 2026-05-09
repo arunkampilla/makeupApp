@@ -19,9 +19,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 
 
-  const BACKEND_URL =
-    process.env.EXPO_PUBLIC_BACKEND_URL ||
-    (typeof window !== 'undefined' ? window.location.origin : '');
+//   const BACKEND_URL =
+//     process.env.EXPO_PUBLIC_BACKEND_URL ||
+//     (typeof window !== 'undefined' ? window.location.origin : '');
+const BACKEND_URL ="https://makeupapp-backend.onrender.com";
 
 interface Client {
   id: string;
