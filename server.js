@@ -3,46 +3,35 @@ const path = require("path");
 
 const app = express();
 
-// MUST be BEFORE routes
 app.use(express.json());
 
 let clients = [];
 
-// GET
+// API ROUTES
 app.get("/api/clients", (req, res) => {
   res.json(clients);
 });
 
-// POST
 app.post("/api/clients", (req, res) => {
   try {
-    console.log("BODY RECEIVED:", req.body);
-
     const newClient = {
       id: Date.now().toString(),
-      name: req.body?.name || "",
-      phone: req.body?.phone || "",
-      email: req.body?.email || "",
-      notes: req.body?.notes || "",
+      ...req.body,
       created_at: new Date().toISOString(),
     };
 
     clients.push(newClient);
-
-    console.log("CLIENT ADDED:", newClient);
-
     res.status(201).json(newClient);
   } catch (err) {
-    console.error("POST ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// static
+// STATIC FRONTEND
 app.use(express.static(path.join(__dirname, "dist")));
 
-// SPA fallback (IMPORTANT FIX - regex correct)
-app.get("/*", (req, res) => {
+// SAFE FALLBACK (NO path-to-regexp issues)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
