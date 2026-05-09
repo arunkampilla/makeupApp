@@ -1,55 +1,61 @@
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-/* =========================
+/* -------------------------
    TEMP IN-MEMORY DATABASE
-========================= */
+-------------------------- */
 
 let clients = [];
 
-/* =========================
+/* -------------------------
    API ROUTES
-========================= */
+-------------------------- */
 
 // GET clients
-app.get("/api/clients", (req, res) => {
+app.get('/api/clients', (req, res) => {
   res.json(clients);
 });
 
 // ADD client
-app.post("/api/clients", (req, res) => {
+app.post('/api/clients', (req, res) => {
   const newClient = {
     id: Date.now().toString(),
-    ...req.body,
+    name: req.body.name || '',
+    phone: req.body.phone || '',
+    email: req.body.email || '',
+    notes: req.body.notes || '',
     created_at: new Date().toISOString(),
   };
 
   clients.push(newClient);
 
-  console.log("Client added:", newClient);
-
-  res.status(201).json(newClient);
+  res.json(newClient);
 });
 
 // UPDATE client
-app.put("/api/clients/:id", (req, res) => {
+app.put('/api/clients/:id', (req, res) => {
   const { id } = req.params;
 
   clients = clients.map((client) =>
-    client.id === id ? { ...client, ...req.body } : client
+    client.id === id
+      ? {
+          ...client,
+          ...req.body,
+        }
+      : client
   );
 
   res.json({ success: true });
 });
 
 // DELETE client
-app.delete("/api/clients/:id", (req, res) => {
+app.delete('/api/clients/:id', (req, res) => {
   const { id } = req.params;
 
   clients = clients.filter((client) => client.id !== id);
@@ -57,23 +63,22 @@ app.delete("/api/clients/:id", (req, res) => {
   res.json({ success: true });
 });
 
-/* =========================
-   SERVE EXPO WEB BUILD
-========================= */
+/* -------------------------
+   FRONTEND
+-------------------------- */
 
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, 'dist')));
 
-// SPA fallback
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-/* =========================
-   START SERVER
-========================= */
+/* -------------------------
+   SERVER
+-------------------------- */
 
-const port = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8081;
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
