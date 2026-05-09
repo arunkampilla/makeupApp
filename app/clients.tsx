@@ -19,8 +19,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 
 
-const BACKEND_URL =
-  process.env.EXPO_PUBLIC_BACKEND_URL || '';
+  const BACKEND_URL =
+    process.env.EXPO_PUBLIC_BACKEND_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : '');
 
 interface Client {
   id: string;
@@ -99,47 +100,98 @@ export default function Clients() {
     setModalVisible(true);
   };
 
-  const handleSave = async () => {
-    if (!formName.trim()) {
-      Alert.alert('Error', 'Please enter client name');
-      return;
+//   const handleSave = async () => {
+//     if (!formName.trim()) {
+//       Alert.alert('Error', 'Please enter client name');
+//       return;
+//     }
+//
+//     try {
+//       const clientData = {
+//         name: formName.trim(),
+//         phone: formPhone.trim(),
+//         email: formEmail.trim(),
+//         notes: formNotes.trim(),
+//       };
+//
+//       let response;
+//       if (editingClient) {
+//         response = await fetch(`${BACKEND_URL}/api/clients/${editingClient.id}`, {
+//           method: 'PUT',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify(clientData),
+//         });
+//       } else {
+//         response = await fetch(`${BACKEND_URL}/api/clients`, {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify(clientData),
+//         });
+//       }
+//
+//       if (response.ok) {
+//         setModalVisible(false);
+//         fetchClients(searchQuery);
+//       } else {
+//         Alert.alert('Error', 'Failed to save client');
+//       }
+//     } catch (error) {
+//       console.error('Error saving client:', error);
+//       Alert.alert('Error', 'Failed to save client');
+//     }
+//   };
+const handleSave = async () => {
+  if (!formName.trim()) {
+    Alert.alert('Error', 'Please enter client name');
+    return;
+  }
+
+  try {
+    const clientData = {
+      name: formName.trim(),
+      phone: formPhone.trim(),
+      email: formEmail.trim(),
+      notes: formNotes.trim(),
+    };
+
+    console.log('Saving client to:', `${BACKEND_URL}/api/clients`);
+    console.log('Payload:', clientData);
+
+    let response;
+
+    if (editingClient) {
+      response = await fetch(`${BACKEND_URL}/api/clients/${editingClient.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clientData),
+      });
+    } else {
+      response = await fetch(`${BACKEND_URL}/api/clients`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clientData),
+      });
     }
 
-    try {
-      const clientData = {
-        name: formName.trim(),
-        phone: formPhone.trim(),
-        email: formEmail.trim(),
-        notes: formNotes.trim(),
-      };
+    const result = await response.json();
 
-      let response;
-      if (editingClient) {
-        response = await fetch(`${BACKEND_URL}/api/clients/${editingClient.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(clientData),
-        });
-      } else {
-        response = await fetch(`${BACKEND_URL}/api/clients`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(clientData),
-        });
-      }
+    console.log('Server response:', result);
 
-      if (response.ok) {
-        setModalVisible(false);
-        fetchClients(searchQuery);
-      } else {
-        Alert.alert('Error', 'Failed to save client');
-      }
-    } catch (error) {
-      console.error('Error saving client:', error);
-      Alert.alert('Error', 'Failed to save client');
+    if (response.ok) {
+      setModalVisible(false);
+      fetchClients(searchQuery);
+    } else {
+      Alert.alert('Error', JSON.stringify(result));
     }
-  };
-
+  } catch (error) {
+    console.error('Save error:', error);
+    Alert.alert('Error', 'Failed to save client');
+  }
+};
   const handleDelete = (client: Client) => {
     Alert.alert(
       'Delete Client',
