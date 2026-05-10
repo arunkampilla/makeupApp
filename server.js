@@ -5,78 +5,43 @@ const app = express();
 
 app.use(express.json());
 
-// Temporary in-memory storage
 let clients = [];
 
-// GET all clients
+// HEALTH CHECK
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
+
+// GET CLIENTS
 app.get("/api/clients", (req, res) => {
-  try {
-    res.json(clients);
-  } catch (err) {
-    console.error("GET CLIENTS ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
+  console.log("GET /api/clients called");
+  res.json(clients);
 });
 
-// ADD client
+// ADD CLIENT
 app.post("/api/clients", (req, res) => {
-  try {
-    console.log("BODY:", req.body);
+  console.log("POST BODY:", req.body);
 
-    const newClient = {
-      id: Date.now().toString(),
-      name: req.body?.name || "",
-      phone: req.body?.phone || "",
-      email: req.body?.email || "",
-      notes: req.body?.notes || "",
-      created_at: new Date().toISOString(),
-    };
+  const newClient = {
+    id: Date.now().toString(),
+    name: req.body.name || "",
+    phone: req.body.phone || "",
+    email: req.body.email || "",
+    notes: req.body.notes || "",
+    created_at: new Date().toISOString(),
+  };
 
-    clients.push(newClient);
+  clients.push(newClient);
 
-    console.log("CLIENT ADDED:", newClient);
+  console.log("CLIENTS:", clients);
 
-    res.status(201).json(newClient);
-  } catch (err) {
-    console.error("POST CLIENT ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
+  res.status(201).json(newClient);
 });
 
-// UPDATE client
-app.put("/api/clients/:id", (req, res) => {
-  try {
-    clients = clients.map((client) =>
-      client.id === req.params.id
-        ? { ...client, ...req.body }
-        : client
-    );
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error("UPDATE ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// DELETE client
-app.delete("/api/clients/:id", (req, res) => {
-  try {
-    clients = clients.filter(
-      (client) => client.id !== req.params.id
-    );
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error("DELETE ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Serve frontend
+// SERVE FRONTEND
 app.use(express.static(path.join(__dirname, "dist")));
 
-// Fallback for Expo Router / React Router
+// FALLBACK
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
